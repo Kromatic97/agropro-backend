@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Persona {
+  id           Int           @id @default(autoincrement())
+  nombre       String
+  funcionario  Funcionario?
+  proveedor    Proveedor?
+  egresos      Egreso[]      @relation("PersonaEgresos")
+}
+
+model Funcionario {
+  id        Int       @id
+  persona   Persona   @relation(fields: [id], references: [id])
+  egresos   Egreso[]  @relation("EgresosFuncionario")
+}
+
+model Proveedor {
+  id        Int       @id
+  persona   Persona   @relation(fields: [id], references: [id])
+  egresos   Egreso[]  @relation("EgresosProveedor")
+}
+
+model Entidad {
+  id           Int           @id @default(autoincrement())
+  nombre       String
+
+  egresos      Egreso[]
+  lanzamientos Lanzamiento[]
+}
+
+model Moneda {
+  id      Int     @id @default(autoincrement())
+  nombre  String
+  egresos Egreso[]
+}
+
+model Condicion {
+  id      Int     @id @default(autoincrement())
+  nombre  String
+  egresos Egreso[]
+}
+
+model TipoEgreso {
+  id      Int     @id @default(autoincrement())
+  nombre  String
+  egresos Egreso[]
+}
+
+model Egreso {
+  id            Int           @id @default(autoincrement())
+  personaId     Int?
+  entidadId     Int
+  monedaId      Int
+  condicionId   Int
+  tipoEgresoId  Int
+  fecha         DateTime
+  monto         Float
+  descripcion   String
+
+  proveedor     Proveedor?    @relation("EgresosProveedor", fields: [personaId], references: [id], map: "fk_egreso_proveedor")
+  funcionario   Funcionario?  @relation("EgresosFuncionario", fields: [personaId], references: [id], map: "fk_egreso_funcionario")
+  persona       Persona?      @relation("PersonaEgresos", fields: [personaId], references: [id], map: "fk_egreso_persona")
+
+  entidad       Entidad       @relation(fields: [entidadId], references: [id])
+  moneda        Moneda        @relation(fields: [monedaId], references: [id])
+  condicion     Condicion     @relation(fields: [condicionId], references: [id])
+  tipo_egreso   TipoEgreso    @relation(fields: [tipoEgresoId], references: [id])
+  lanzamientos  Lanzamiento[]
+}
+
+model Lanzamiento {
+  id         Int     @id @default(autoincrement())
+  egresoId   Int
+  entidadId  Int
+
+  egreso     Egreso  @relation(fields: [egresoId], references: [id])
+  entidad    Entidad @relation(fields: [entidadId], references: [id])
+}
