@@ -32,7 +32,7 @@ export async function POST(req) {
       data: {
         fecha: new Date(),
         entidadId: data.entidadId,
-        personalId: data.personalId,
+        persona_id: data.persona_id,
         tipoEgresoId: data.tipoEgresoId,
         condicionId: data.condicionId,
         monedaId: data.monedaId,
