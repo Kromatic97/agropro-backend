@@ -29,8 +29,7 @@ export async function POST(req) {
       data: {
         fecha: new Date(),
         entidadId: data.entidadId,
-        personalId: data.personalId,     // 👈 Funcionario (opcional)
-        proveedorId: data.proveedorId,   // 👈 Proveedor (opcional)
+        personaId: data.personaId,     // 👈 ESTE es el campo correcto
         tipoEgresoId: data.tipoEgresoId,
         condicionId: data.condicionId,
         monedaId: data.monedaId,
