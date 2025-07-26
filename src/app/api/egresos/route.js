@@ -24,3 +24,28 @@ export async function GET() {
 }
 }
 
+export async function POST(req) {
+  try {
+    const data = await req.json();
+
+    const nuevo = await prisma.egreso.create({
+      data: {
+        fecha: new Date(),
+        entidadId: data.entidadId,
+        personalId: data.personalId,
+        tipoEgresoId: data.tipoEgresoId,
+        condicionId: data.condicionId,
+        monedaId: data.monedaId,
+        monto: data.monto,
+        descripcion: data.descripcion,
+      },
+    });
+
+    return Response.json(nuevo);
+  } catch (error) {
+    console.error("Error al crear egreso:", error);
+    return NextResponse.json({ error: "Error al crear egreso" }, { status: 500 });
+  }
+}
+
+
