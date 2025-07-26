@@ -1,7 +1,5 @@
-// src/app/api/egresos/route.js
 import prisma from '@/lib/prisma'
 import { NextResponse } from 'next/server';
-
 
 export async function GET() {
   try {
@@ -14,14 +12,13 @@ export async function GET() {
         condicion: true,
         moneda: true,
       },
-    })
+    });
 
-    return Response.json(egresos)
+    return NextResponse.json(egresos);
   } catch (error) {
-  console.error("ERROR INTERNO EN /api/egresos:", JSON.stringify(error, null, 2));
-
-  return NextResponse.json({ error: "Error al obtener egresos" }, { status: 500 });
-}
+    console.error("ERROR INTERNO EN /api/egresos:", JSON.stringify(error, null, 2));
+    return NextResponse.json({ error: "Error al obtener egresos" }, { status: 500 });
+  }
 }
 
 export async function POST(req) {
@@ -32,7 +29,8 @@ export async function POST(req) {
       data: {
         fecha: new Date(),
         entidadId: data.entidadId,
-        persona_id: data.persona_id,
+        personalId: data.personalId,     // 👈 Funcionario (opcional)
+        proveedorId: data.proveedorId,   // 👈 Proveedor (opcional)
         tipoEgresoId: data.tipoEgresoId,
         condicionId: data.condicionId,
         monedaId: data.monedaId,
@@ -41,11 +39,12 @@ export async function POST(req) {
       },
     });
 
-    return Response.json(nuevo);
+    return NextResponse.json(nuevo);
   } catch (error) {
     console.error("Error al crear egreso:", error);
     return NextResponse.json({ error: "Error al crear egreso" }, { status: 500 });
   }
 }
+
 
 
