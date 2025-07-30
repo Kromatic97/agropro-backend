@@ -12,19 +12,17 @@ model Persona {
   nombre       String
   funcionario  Funcionario?
   proveedor    Proveedor?
-  egresos      Egreso[]      @relation("PersonaEgresos")
+  // Eliminamos la relación con egresos aquí porque ahora es polimórfica
 }
 
 model Funcionario {
   id        Int       @id
   persona   Persona   @relation(fields: [id], references: [id])
-  egresos   Egreso[]  @relation("EgresosFuncionario")
 }
 
 model Proveedor {
   id        Int       @id
   persona   Persona   @relation(fields: [id], references: [id])
-  egresos   Egreso[]  @relation("EgresosProveedor")
 }
 
 model Entidad {
@@ -55,18 +53,17 @@ model TipoEgreso {
 
 model Egreso {
   id            Int           @id @default(autoincrement())
-  personaId     Int?
+
+  tipoPersona   String        // 'Proveedor' o 'Funcionario'
+  personaId     Int           // Apunta a proveedor.id o funcionario.id, según tipoPersona
+
   entidadId     Int
   monedaId      Int
   condicionId   Int
   tipoEgresoId  Int
-  fecha         DateTime
+  fecha         DateTime      @default(now())
   monto         Float
   descripcion   String
-
-  proveedor     Proveedor?    @relation("EgresosProveedor", fields: [personaId], references: [id], map: "fk_egreso_proveedor")
-  funcionario   Funcionario?  @relation("EgresosFuncionario", fields: [personaId], references: [id], map: "fk_egreso_funcionario")
-  persona       Persona?      @relation("PersonaEgresos", fields: [personaId], references: [id], map: "fk_egreso_persona")
 
   entidad       Entidad       @relation(fields: [entidadId], references: [id])
   moneda        Moneda        @relation(fields: [monedaId], references: [id])
