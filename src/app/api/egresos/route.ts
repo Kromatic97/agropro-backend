@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { Prisma } from '@prisma/client';
 
 type TipoPersona = 'Funcionario' | 'Proveedor';
 
@@ -18,51 +17,41 @@ export async function GET(req: Request): Promise<NextResponse> {
     let personas: PersonaResponse[] = [];
 
     if (tipo === 'Funcionario') {
-      const funcionarios: (Prisma.FuncionarioGetPayload<{
-        include: { persona: true };
-      }>)[] = await prisma.funcionario.findMany({
+      const funcionarios = await prisma.funcionario.findMany({
         include: { persona: true },
       });
 
-      personas = funcionarios.map((f): PersonaResponse => ({
+      personas = funcionarios.map((f) => ({
         id: f.id,
         nombre: f.persona.nombre,
-        tipo: 'Funcionario',
+        tipo: 'Funcionario' as TipoPersona,
       }));
     } else if (tipo === 'Proveedor') {
-      const proveedores: (Prisma.ProveedorGetPayload<{
-        include: { persona: true };
-      }>)[] = await prisma.proveedor.findMany({
+      const proveedores = await prisma.proveedor.findMany({
         include: { persona: true },
       });
 
-      personas = proveedores.map((p): PersonaResponse => ({
+      personas = proveedores.map((p) => ({
         id: p.id,
         nombre: p.persona.nombre,
-        tipo: 'Proveedor',
+        tipo: 'Proveedor' as TipoPersona,
       }));
     } else {
       const [funcionarios, proveedores] = await Promise.all([
-        prisma.funcionario.findMany({
-          include: { persona: true },
-        }) as Promise<Prisma.FuncionarioGetPayload<{ include: { persona: true } }>[]>,
-
-        prisma.proveedor.findMany({
-          include: { persona: true },
-        }) as Promise<Prisma.ProveedorGetPayload<{ include: { persona: true } }>[]>,
-
+        prisma.funcionario.findMany({ include: { persona: true } }),
+        prisma.proveedor.findMany({ include: { persona: true } }),
       ]);
 
       personas = [
-        ...funcionarios.map((f): PersonaResponse => ({
+        ...funcionarios.map((f) => ({
           id: f.id,
           nombre: f.persona.nombre,
-          tipo: 'Funcionario',
+          tipo: 'Funcionario' as TipoPersona,
         })),
-        ...proveedores.map((p): PersonaResponse => ({
+        ...proveedores.map((p) => ({
           id: p.id,
           nombre: p.persona.nombre,
-          tipo: 'Proveedor',
+          tipo: 'Proveedor' as TipoPersona,
         })),
       ];
     }
