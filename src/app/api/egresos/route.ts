@@ -25,25 +25,25 @@ interface PersonaResponse {
 
 export async function GET() {
   try {
-    const funcionarios: FuncionarioConPersona[] = await prisma.funcionario.findMany({
+    const funcionarios = await prisma.funcionario.findMany({
       include: {
         persona: true,
       },
     });
 
-    const proveedores: ProveedorConPersona[] = await prisma.proveedor.findMany({
+    const proveedores = await prisma.proveedor.findMany({
       include: {
         persona: true,
       },
     });
 
     const personas: PersonaResponse[] = [
-      ...funcionarios.map((f): PersonaResponse => ({
+      ...funcionarios.map((f: FuncionarioConPersona): PersonaResponse => ({
         id: f.id,
         nombre: f.persona.nombre,
         tipo: 'Funcionario',
       })),
-      ...proveedores.map((p): PersonaResponse => ({
+      ...proveedores.map((p: ProveedorConPersona): PersonaResponse => ({
         id: p.id,
         nombre: p.persona.nombre,
         tipo: 'Proveedor',
