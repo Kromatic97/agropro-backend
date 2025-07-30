@@ -3,39 +3,52 @@ import { prisma } from '@/lib/prisma';
 
 type TipoPersona = 'Funcionario' | 'Proveedor';
 
-type PersonaResponse = {
+interface FuncionarioConPersona {
+  id: number;
+  persona: {
+    nombre: string;
+  };
+}
+
+interface ProveedorConPersona {
+  id: number;
+  persona: {
+    nombre: string;
+  };
+}
+
+interface PersonaResponse {
   id: number;
   nombre: string;
   tipo: TipoPersona;
-};
+}
 
 export async function GET() {
   try {
-    const funcionarios = await prisma.funcionario.findMany({
+    const funcionarios: FuncionarioConPersona[] = await prisma.funcionario.findMany({
       include: {
         persona: true,
       },
     });
 
-    const proveedores = await prisma.proveedor.findMany({
+    const proveedores: ProveedorConPersona[] = await prisma.proveedor.findMany({
       include: {
         persona: true,
       },
     });
 
-    const funcionariosMap: PersonaResponse[] = funcionarios.map((f): PersonaResponse => ({
-      id: f.id,
-      nombre: f.persona.nombre,
-      tipo: 'Funcionario',
-    }));
-
-    const proveedoresMap: PersonaResponse[] = proveedores.map((p): PersonaResponse => ({
-      id: p.id,
-      nombre: p.persona.nombre,
-      tipo: 'Proveedor',
-    }));
-
-    const personas: PersonaResponse[] = [...funcionariosMap, ...proveedoresMap];
+    const personas: PersonaResponse[] = [
+      ...funcionarios.map((f): PersonaResponse => ({
+        id: f.id,
+        nombre: f.persona.nombre,
+        tipo: 'Funcionario',
+      })),
+      ...proveedores.map((p): PersonaResponse => ({
+        id: p.id,
+        nombre: p.persona.nombre,
+        tipo: 'Proveedor',
+      })),
+    ];
 
     return NextResponse.json(personas);
   } catch (error) {
