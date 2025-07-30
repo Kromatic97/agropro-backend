@@ -1,25 +1,35 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
+type TipoPersona = 'Funcionario' | 'Proveedor';
+
+type PersonaResponse = {
+  id: number;
+  nombre: string;
+  tipoPersona: TipoPersona;
+};
+
 export async function GET() {
   try {
-    // Obtener funcionarios y proveedores con su persona asociada
     const [funcionarios, proveedores] = await Promise.all([
-      prisma.funcionario.findMany({ include: { persona: true } }),
-      prisma.proveedor.findMany({ include: { persona: true } }),
+      prisma.funcionario.findMany({
+        include: { persona: true },
+      }),
+      prisma.proveedor.findMany({
+        include: { persona: true },
+      }),
     ]);
 
-    // Mapear y combinar en una sola lista
-    const personas = [
-      ...funcionarios.map(f => ({
+    const personas: PersonaResponse[] = [
+      ...funcionarios.map((f): PersonaResponse => ({
         id: f.id,
         nombre: f.persona.nombre,
-        tipo: 'Funcionario',
+        tipoPersona: 'Funcionario',
       })),
-      ...proveedores.map(p => ({
+      ...proveedores.map((p): PersonaResponse => ({
         id: p.id,
         nombre: p.persona.nombre,
-        tipo: 'Proveedor',
+        tipoPersona: 'Proveedor',
       })),
     ];
 
@@ -32,3 +42,4 @@ export async function GET() {
     );
   }
 }
+
