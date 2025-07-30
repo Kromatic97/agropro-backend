@@ -1,18 +1,14 @@
-generator client {
-  provider = "prisma-client-js"
-}
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
 
 model Persona {
   id           Int           @id @default(autoincrement())
   nombre       String
   funcionario  Funcionario?
   proveedor    Proveedor?
-  // Eliminamos la relación con egresos aquí porque ahora es polimórfica
 }
 
 model Funcionario {
@@ -28,7 +24,6 @@ model Proveedor {
 model Entidad {
   id           Int           @id @default(autoincrement())
   nombre       String
-
   egresos      Egreso[]
   lanzamientos Lanzamiento[]
 }
@@ -52,23 +47,23 @@ model TipoEgreso {
 }
 
 model Egreso {
-  id            Int           @id @default(autoincrement())
-
-  tipoPersona   String        // 'Proveedor' o 'Funcionario'
-  personaId     Int           // Apunta a proveedor.id o funcionario.id, según tipoPersona
+  id            Int        @id @default(autoincrement())
+  tipoPersona   String     // 'Proveedor' o 'Funcionario'
+  personaId     Int
 
   entidadId     Int
   monedaId      Int
   condicionId   Int
   tipoEgresoId  Int
-  fecha         DateTime      @default(now())
+
+  fecha         DateTime   @default(now())
   monto         Float
   descripcion   String
 
-  entidad       Entidad       @relation(fields: [entidadId], references: [id])
-  moneda        Moneda        @relation(fields: [monedaId], references: [id])
-  condicion     Condicion     @relation(fields: [condicionId], references: [id])
-  tipo_egreso   TipoEgreso    @relation(fields: [tipoEgresoId], references: [id])
+  entidad       Entidad    @relation(fields: [entidadId], references: [id])
+  moneda        Moneda     @relation(fields: [monedaId], references: [id])
+  condicion     Condicion  @relation(fields: [condicionId], references: [id])
+  tipoEgreso    TipoEgreso @relation(fields: [tipoEgresoId], references: [id])
   lanzamientos  Lanzamiento[]
 }
 
@@ -76,7 +71,7 @@ model Lanzamiento {
   id         Int     @id @default(autoincrement())
   egresoId   Int
   entidadId  Int
-
   egreso     Egreso  @relation(fields: [egresoId], references: [id])
   entidad    Entidad @relation(fields: [entidadId], references: [id])
 }
+
