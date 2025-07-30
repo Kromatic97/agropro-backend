@@ -1,58 +1,83 @@
-import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-
-type TipoPersona = 'Funcionario' | 'Proveedor';
-
-interface FuncionarioConPersona {
-  id: number;
-  persona: {
-    nombre: string;
-  };
-}
-
-interface ProveedorConPersona {
-  id: number;
-  persona: {
-    nombre: string;
-  };
-}
-
-interface PersonaResponse {
-  id: number;
-  nombre: string;
-  tipo: TipoPersona;
-}
+import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
-    const funcionarios = await prisma.funcionario.findMany({
+    const egresos = await prisma.egreso.findMany({
       include: {
-        persona: true,
+        entidad: true,
+        proveedor: true,
+        funcionario: true,
+        tipo_egreso: true,
+        condicion: true,
+        moneda: true,
       },
     });
 
-    const proveedores = await prisma.proveedor.findMany({
-      include: {
-        persona: true,
-      },
-    });
-
-    const personas: PersonaResponse[] = [
-      ...funcionarios.map((f: FuncionarioConPersona): PersonaResponse => ({
-        id: f.id,
-        nombre: f.persona.nombre,
-        tipo: 'Funcionario',
-      })),
-      ...proveedores.map((p: ProveedorConPersona): PersonaResponse => ({
-        id: p.id,
-        nombre: p.persona.nombre,
-        tipo: 'Proveedor',
-      })),
-    ];
-
-    return NextResponse.json(personas);
+    return NextResponse.json(egresos);
   } catch (error) {
-    console.error('Error al obtener personas:', error);
-    return NextResponse.json({ error: 'Error al obtener personas' }, { status: 500 });
+    console.error("ERROR INTERNO EN /api/egresos:", JSON.stringify(error, null, 2));
+    return NextResponse.json({ error: "Error al obtener egresos" }, { status: 500 });
   }
 }
+
+
+
+// POST /api/egresos
+export async function POST(req: Request) {
+  try {
+    const body = await req.json();
+    const {
+      tipoPersona,
+      personaId,
+      entidadId,
+      tipoEgresoId,
+      condicionId,
+      monedaId,
+      monto,
+      descripcion,
+    } = body;
+
+    // Validación de tipoPersona
+    if (!['Proveedor', 'Funcionario'].includes(tipoPersona)) {
+      return NextResponse.json({ error: 'tipoPersona debe ser Proveedor o Funcionario' }, { status: 400 });
+    }
+
+    // Validar existencia según tipoPersona
+    if (tipoPersona === 'Proveedor') {
+      const proveedor = await prisma.proveedor.findUnique({ where: { id: personaId } });
+      if (!proveedor) {
+        return NextResponse.json({ error: 'Proveedor no encontrado' }, { status: 404 });
+      }
+    }
+
+    if (tipoPersona === 'Funcionario') {
+      const funcionario = await prisma.funcionario.findUnique({ where: { id: personaId } });
+      if (!funcionario) {
+        return NextResponse.json({ error: 'Funcionario no encontrado' }, { status: 404 });
+      }
+    }
+
+    // Crear egreso
+    const egreso = await prisma.egreso.create({
+      data: {
+        tipoPersona,
+        personaId,
+        entidadId,
+        tipoEgresoId,
+        condicionId,
+        monedaId,
+        monto,
+        descripcion,
+      },
+    });
+
+    return NextResponse.json(egreso);
+  } catch (error) {
+    console.error('Error al crear egreso:', error);
+    return NextResponse.json({ error: 'Error al crear egreso' }, { status: 500 });
+  }
+}
+
+
+
