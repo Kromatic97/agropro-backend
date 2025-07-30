@@ -5,10 +5,9 @@ export async function GET() {
   try {
     const egresos = await prisma.egreso.findMany({
       include: {
+        persona: true,         // ahora es una sola tabla
         entidad: true,
-        proveedor: true,
-        funcionario: true,
-        tipo_egreso: true,
+        tipoEgreso: true,
         condicion: true,
         moneda: true,
       },
@@ -20,6 +19,7 @@ export async function GET() {
     return NextResponse.json({ error: "Error al obtener egresos" }, { status: 500 });
   }
 }
+
 
 
 
