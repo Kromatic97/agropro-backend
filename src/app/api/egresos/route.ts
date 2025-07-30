@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import type { Funcionario, Proveedor } from '@prisma/client';
 
 type TipoPersona = 'Funcionario' | 'Proveedor';
 
@@ -17,24 +18,26 @@ export async function GET(req: Request): Promise<NextResponse> {
     let personas: PersonaResponse[] = [];
 
     if (tipo === 'Funcionario') {
-      const funcionarios = await prisma.funcionario.findMany({
-        include: { persona: true },
-      });
+      const funcionarios: (Funcionario & { persona: { nombre: string } })[] =
+        await prisma.funcionario.findMany({
+          include: { persona: true },
+        });
 
-      personas = funcionarios.map((f) => ({
+      personas = funcionarios.map((f): PersonaResponse => ({
         id: f.id,
         nombre: f.persona.nombre,
-        tipo: 'Funcionario' as TipoPersona,
+        tipo: 'Funcionario',
       }));
     } else if (tipo === 'Proveedor') {
-      const proveedores = await prisma.proveedor.findMany({
-        include: { persona: true },
-      });
+      const proveedores: (Proveedor & { persona: { nombre: string } })[] =
+        await prisma.proveedor.findMany({
+          include: { persona: true },
+        });
 
-      personas = proveedores.map((p) => ({
+      personas = proveedores.map((p): PersonaResponse => ({
         id: p.id,
         nombre: p.persona.nombre,
-        tipo: 'Proveedor' as TipoPersona,
+        tipo: 'Proveedor',
       }));
     } else {
       const [funcionarios, proveedores] = await Promise.all([
@@ -43,15 +46,15 @@ export async function GET(req: Request): Promise<NextResponse> {
       ]);
 
       personas = [
-        ...funcionarios.map((f) => ({
+        ...funcionarios.map((f): PersonaResponse => ({
           id: f.id,
           nombre: f.persona.nombre,
-          tipo: 'Funcionario' as TipoPersona,
+          tipo: 'Funcionario',
         })),
-        ...proveedores.map((p) => ({
+        ...proveedores.map((p): PersonaResponse => ({
           id: p.id,
           nombre: p.persona.nombre,
-          tipo: 'Proveedor' as TipoPersona,
+          tipo: 'Proveedor',
         })),
       ];
     }
