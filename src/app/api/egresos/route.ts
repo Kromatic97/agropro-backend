@@ -23,18 +23,19 @@ export async function GET() {
       },
     });
 
-    const personas: PersonaResponse[] = [
-      ...funcionarios.map((f): PersonaResponse => ({
-        id: f.id,
-        nombre: f.persona.nombre,
-        tipo: 'Funcionario',
-      })),
-      ...proveedores.map((p): PersonaResponse => ({
-        id: p.id,
-        nombre: p.persona.nombre,
-        tipo: 'Proveedor',
-      })),
-    ];
+    const funcionariosMap: PersonaResponse[] = funcionarios.map((f): PersonaResponse => ({
+      id: f.id,
+      nombre: f.persona.nombre,
+      tipo: 'Funcionario',
+    }));
+
+    const proveedoresMap: PersonaResponse[] = proveedores.map((p): PersonaResponse => ({
+      id: p.id,
+      nombre: p.persona.nombre,
+      tipo: 'Proveedor',
+    }));
+
+    const personas: PersonaResponse[] = [...funcionariosMap, ...proveedoresMap];
 
     return NextResponse.json(personas);
   } catch (error) {
