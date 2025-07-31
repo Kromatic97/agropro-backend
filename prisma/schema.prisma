@@ -70,6 +70,7 @@ model Egreso {
   condicion     Condicion  @relation(fields: [condicionId], references: [id])
   tipoEgreso    TipoEgreso @relation(fields: [tipoEgresoId], references: [id])
   lanzamientos  Lanzamiento[]
+  detallesEgreso DetalleEgreso[]
 }
 
 
@@ -80,3 +81,48 @@ model Lanzamiento {
   egreso    Egreso  @relation(fields: [egresoId], references: [id])
   entidad   Entidad @relation(fields: [entidadId], references: [id])
 }
+
+
+model Division {
+  id             Int              @id @default(autoincrement())
+  nombre         String
+  detallesEgreso DetalleEgreso[]
+}
+
+model ObjetoGasto {
+  id              Int             @id @default(autoincrement())
+  detalleEgresoId Int
+  tipo            String          // Ej: 'Zafra', 'Vehiculo', 'Campo'
+  referenciaId    Int             // ID real del objeto (por ejemplo: zafraId, vehiculoId...)
+
+  detalleEgreso   DetalleEgreso   @relation(fields: [detalleEgresoId], references: [id])
+}
+
+
+model Iva {
+  id          Int             @id @default(autoincrement())
+  descripcion String          // Ej: '10%', '5%', 'Exenta'
+  porcentaje  Float           // Ej: 0.10, 0.05, 0.00
+  detalles    DetalleEgreso[]
+}
+
+
+model DetalleEgreso {
+  id              Int           @id @default(autoincrement())
+  egresoId        Int
+  divisionId      Int
+  descripcion     String
+  cantidad        Float
+  precioUnitario  Float
+  subtotal        Float
+  ivaId           Int
+  ivaMonto        Float
+  total           Float
+
+  egreso          Egreso        @relation(fields: [egresoId], references: [id])
+  division        Division      @relation(fields: [divisionId], references: [id])
+  iva             Iva           @relation(fields: [ivaId], references: [id])
+  objetosGasto    ObjetoGasto[]
+}
+
+
