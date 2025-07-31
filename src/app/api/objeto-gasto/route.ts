@@ -24,3 +24,16 @@ export async function POST(request: Request) {
   }
 }
 
+
+export async function GET() {
+  try {
+    const objetos = await prisma.objetoGasto.findMany()
+    return NextResponse.json(objetos)
+  } catch (error) {
+    console.error('Error al obtener objetos de gasto:', error)
+    return NextResponse.json(
+      { error: 'Error al obtener objetos de gasto' },
+      { status: 500 }
+    )
+  }
+}
