@@ -40,3 +40,20 @@ export async function POST(req: Request) {
   }
 }
 
+export async function GET() {
+  try {
+    const detalles = await prisma.detalleEgreso.findMany({
+      include: {
+        egreso: true,
+        division: true,
+        objetoGasto: true,
+        iva: true,
+      },
+    })
+
+    return NextResponse.json(detalles)
+  } catch (error) {
+    console.error('Error al obtener detalles de egreso:', error)
+    return NextResponse.json({ error: 'Error al obtener detalles de egreso' }, { status: 500 })
+  }
+}
