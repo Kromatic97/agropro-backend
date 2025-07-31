@@ -19,3 +19,26 @@ export async function GET() {
     return NextResponse.json({ error: 'Error al obtener tipos de egreso' }, { status: 500 });
   }
 }
+
+
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json()
+    const { nombre } = body
+
+    const nuevoTipo = await prisma.tipoEgreso.create({
+      data: {
+        nombre,
+      },
+    })
+
+    return NextResponse.json(nuevoTipo, { status: 201 })
+  } catch (error) {
+    console.error('Error al crear tipo de egreso:', error)
+    return NextResponse.json(
+      { error: 'Error al crear tipo de egreso' },
+      { status: 500 }
+    )
+  }
+}
