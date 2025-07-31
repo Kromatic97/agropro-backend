@@ -104,16 +104,18 @@ model Iva {
 }
 
 model DetalleEgreso {
-  id            Int    @id @default(autoincrement())
-  egresoId      Int
-  divisionId    Int
-  objetoGastoId Int
-  ivaId         Int
-  descripcion   String
-  monto         Float
+  id             Int          @id @default(autoincrement())
+  egresoId       Int
+  divisionId     Int
+  objetoGastoId  Int
+  ivaId          Int
+  descripcion    String
+  cantidad       Float
+  precioUnitario Float
+  monto          Float
 
-  egreso      Egreso      @relation(fields: [egresoId], references: [id])
-  division    Division    @relation(fields: [divisionId], references: [id])
-  objetoGasto ObjetoGasto @relation(fields: [objetoGastoId], references: [id])
-  iva         Iva         @relation(fields: [ivaId], references: [id])
+  egreso         Egreso       @relation(fields: [egresoId], references: [id])
+  division       Division     @relation(fields: [divisionId], references: [id])
+  objetoGasto    ObjetoGasto  @relation(fields: [objetoGastoId], references: [id])
+  iva            Iva          @relation(fields: [ivaId], references: [id])
 }
