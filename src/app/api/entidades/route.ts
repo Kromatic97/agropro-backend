@@ -17,3 +17,22 @@ export async function GET() {
   }
 }
 
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json()
+    const { nombre } = body
+
+    const nuevaEntidad = await prisma.entidad.create({
+      data: { nombre }
+    })
+
+    return NextResponse.json(nuevaEntidad, { status: 201 })
+  } catch (error) {
+    console.error('Error al crear entidad:', error)
+    return NextResponse.json(
+      { error: 'Error al crear entidad' },
+      { status: 500 }
+    )
+  }
+}
