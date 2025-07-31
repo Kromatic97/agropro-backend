@@ -17,3 +17,23 @@ export async function GET() {
     return NextResponse.json({ error: 'Error al obtener monedas' }, { status: 500 });
   }
 }
+
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json()
+    const { nombre } = body
+
+    const nuevaMoneda = await prisma.moneda.create({
+      data: { nombre }
+    })
+
+    return NextResponse.json(nuevaMoneda, { status: 201 })
+  } catch (error) {
+    console.error('Error al crear moneda:', error)
+    return NextResponse.json(
+      { error: 'Error al crear moneda' },
+      { status: 500 }
+    )
+  }
+}
