@@ -5,21 +5,26 @@ export async function GET() {
   try {
     const egresos = await prisma.egreso.findMany({
       include: {
-        persona: true,         // ahora es una sola tabla
+        persona: true,
         entidad: true,
-        tipoEgreso: true,
-        condicion: true,
         moneda: true,
+        condicion: true,
+        tipoEgreso: true,
+      },
+      orderBy: {
+        fecha: 'desc',
       },
     });
 
     return NextResponse.json(egresos);
   } catch (error) {
-    console.error("ERROR INTERNO EN /api/egresos:", JSON.stringify(error, null, 2));
-    return NextResponse.json({ error: "Error al obtener egresos" }, { status: 500 });
+    console.error("ERROR EN GET /api/egresos:", error);
+    return NextResponse.json(
+      { error: 'Error al obtener los egresos' },
+      { status: 500 }
+    );
   }
 }
-
 
 
 
