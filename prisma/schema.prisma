@@ -51,28 +51,27 @@ model TipoEgreso {
 }
 
 model Egreso {
-  id            Int        @id @default(autoincrement())
-  tipoPersona   String     // 'Proveedor' o 'Funcionario'
-  personaId     Int
+  id          Int    @id @default(autoincrement())
+  tipoPersona String // 'Proveedor' o 'Funcionario'
+  personaId   Int
 
-  entidadId     Int
-  monedaId      Int
-  condicionId   Int
-  tipoEgresoId  Int
+  entidadId    Int
+  monedaId     Int
+  condicionId  Int
+  tipoEgresoId Int
 
-  fecha         DateTime   @default(now())
-  monto         Float
-  descripcion   String
+  fecha       DateTime @default(now())
+  monto       Float
+  descripcion String
 
-  persona       Persona    @relation("PersonaEgresos", fields: [personaId], references: [id])
-  entidad       Entidad    @relation(fields: [entidadId], references: [id])
-  moneda        Moneda     @relation(fields: [monedaId], references: [id])
-  condicion     Condicion  @relation(fields: [condicionId], references: [id])
-  tipoEgreso    TipoEgreso @relation(fields: [tipoEgresoId], references: [id])
-  lanzamientos  Lanzamiento[]
+  persona        Persona         @relation("PersonaEgresos", fields: [personaId], references: [id])
+  entidad        Entidad         @relation(fields: [entidadId], references: [id])
+  moneda         Moneda          @relation(fields: [monedaId], references: [id])
+  condicion      Condicion       @relation(fields: [condicionId], references: [id])
+  tipoEgreso     TipoEgreso      @relation(fields: [tipoEgresoId], references: [id])
+  lanzamientos   Lanzamiento[]
   detallesEgreso DetalleEgreso[]
 }
-
 
 model Lanzamiento {
   id        Int     @id @default(autoincrement())
@@ -82,47 +81,39 @@ model Lanzamiento {
   entidad   Entidad @relation(fields: [entidadId], references: [id])
 }
 
+model ObjetoGasto {
+  id             Int             @id @default(autoincrement())
+  tipo           String
+  referenciaId   Int
+  descripcion    String
+  detalleEgresos DetalleEgreso[]
+}
+
 
 model Division {
-  id             Int              @id @default(autoincrement())
+  id             Int             @id @default(autoincrement())
   nombre         String
   detallesEgreso DetalleEgreso[]
 }
 
-model ObjetoGasto {
-  id              Int             @id @default(autoincrement())
-  detalleEgresoId Int
-  tipo            String          // Ej: 'Zafra', 'Vehiculo', 'Campo'
-  referenciaId    Int             // ID real del objeto (por ejemplo: zafraId, vehiculoId...)
-
-  detalleEgreso   DetalleEgreso   @relation(fields: [detalleEgresoId], references: [id])
-}
-
-
 model Iva {
-  id          Int             @id @default(autoincrement())
-  descripcion String          // Ej: '10%', '5%', 'Exenta'
-  porcentaje  Float           // Ej: 0.10, 0.05, 0.00
-  detalles    DetalleEgreso[]
+  id             Int             @id @default(autoincrement())
+  descripcion    String
+  porcentaje     Float
+  detallesEgreso DetalleEgreso[]
 }
-
 
 model DetalleEgreso {
-  id              Int           @id @default(autoincrement())
-  egresoId        Int
-  divisionId      Int
-  descripcion     String
-  cantidad        Float
-  precioUnitario  Float
-  subtotal        Float
-  ivaId           Int
-  ivaMonto        Float
-  total           Float
+  id            Int    @id @default(autoincrement())
+  egresoId      Int
+  divisionId    Int
+  objetoGastoId Int
+  ivaId         Int
+  descripcion   String
+  monto         Float
 
-  egreso          Egreso        @relation(fields: [egresoId], references: [id])
-  division        Division      @relation(fields: [divisionId], references: [id])
-  iva             Iva           @relation(fields: [ivaId], references: [id])
-  objetosGasto    ObjetoGasto[]
+  egreso      Egreso      @relation(fields: [egresoId], references: [id])
+  division    Division    @relation(fields: [divisionId], references: [id])
+  objetoGasto ObjetoGasto @relation(fields: [objetoGastoId], references: [id])
+  iva         Iva         @relation(fields: [ivaId], references: [id])
 }
-
-

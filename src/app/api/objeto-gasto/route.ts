@@ -1,25 +1,26 @@
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   try {
-    const body = await req.json();
-    const { tipo, referenciaId, detalleEgresoId } = body;
+    const body = await request.json()
+    const { tipo, referenciaId, descripcion } = body
 
-    const nuevoObjetoGasto = await prisma.objetoGasto.create({
+    const nuevoObjeto = await prisma.objetoGasto.create({
       data: {
         tipo,
         referenciaId,
-        detalleEgresoId,
-      },
-    });
+        descripcion
+      }
+    })
 
-    return NextResponse.json(nuevoObjetoGasto, { status: 201 });
+    return NextResponse.json(nuevoObjeto, { status: 201 })
   } catch (error) {
-    console.error('Error al crear objeto de gasto:', error);
+    console.error('Error al crear objeto de gasto:', error)
     return NextResponse.json(
       { error: 'Error al crear objeto de gasto' },
       { status: 500 }
-    );
+    )
   }
 }
+
