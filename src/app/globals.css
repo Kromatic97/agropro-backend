@@ -1,6 +1,4 @@
 
-
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -16,8 +14,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #d7e3d8;
+    --foreground: #070606;
   }
 }
 
