@@ -20,3 +20,17 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Error al crear la zafra' }, { status: 500 });
   }
 }
+
+// GET: Listar todas las zafras
+export async function GET() {
+  try {
+    const zafras = await prisma.zafra.findMany({
+      orderBy: { id: 'asc' },
+    });
+
+    return NextResponse.json(zafras);
+  } catch (error) {
+    console.error('Error al obtener zafras:', error);
+    return NextResponse.json({ error: 'Error al obtener las zafras' }, { status: 500 });
+  }
+}
