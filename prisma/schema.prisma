@@ -146,6 +146,6 @@ model DistribucionZafra {
   zafra           Zafra                  @relation(fields: [zafraId], references: [id])
   participante    ParticipanteLanzamiento @relation(fields: [participanteId], references: [id])
 
-  @@unique([zafraId, participanteId]) // Para evitar duplicados
+  @@unique([zafraId, participanteId], name: "zafraId_participanteId")
 }
 
