@@ -1,21 +1,20 @@
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* tus estilos custom debajo si querés */
-
-
+/* globals.css sin Tailwind */
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --primary: #0070f3;
+  --border: #d1d5db;
+  --card: #f3f4f6;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #d7e3d8;
-    --foreground: #070606;
+    --background: #1f2937;
+    --foreground: #f9fafb;
+    --primary: #60a5fa;
+    --border: #374151;
+    --card: #111827;
   }
 }
 
@@ -28,9 +27,10 @@ body {
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  padding: 16px;
 }
 
 * {
@@ -44,8 +44,61 @@ a {
   text-decoration: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 10px;
+  font-size: 15px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background-color: var(--card);
+  color: var(--foreground);
+  margin-top: 4px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid var(--primary);
+}
+
+label {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  display: block;
+}
+
+button {
+  padding: 10px 16px;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+button:hover {
+  background-color: #0366d6;
+}
+
+form {
+  max-width: 600px;
+  margin: 40px auto;
+  background-color: var(--card);
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+h1, h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 16px;
 }

@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import DetalleEgresoItem from '@/components/egresos/DetalleEgresoItem';
 
+// Tipos
+
 type Opcion = {
   id: number;
   nombre: string;
@@ -108,7 +110,7 @@ const EgresoForm = () => {
       });
 
       if (res.ok) {
-        await res.json(); // simplemente consumís la respuesta
+        await res.json();
         alert('Egreso registrado correctamente');
       } else {
         const error = await res.json();
@@ -121,45 +123,29 @@ const EgresoForm = () => {
   }
 
   return (
-    <main className="p-4 max-w-xl mx-auto bg-white rounded-2xl shadow-md mt-6 dark:bg-gray-900">
-      <h1 className="text-2xl font-semibold text-gray-800 mb-6 text-center dark:text-white">
-        Registrar Egreso
-      </h1>
+    <main>
+      <h1>Registrar Egreso</h1>
 
-      <form className="space-y-4" onSubmit={handleSubmit}>
-        <div>
-          <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">Fecha</label>
-          <input
-            type="date"
-            name="fecha"
-            value={formData.fecha}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600"
-          />
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label>Fecha</label>
+          <input type="date" name="fecha" value={formData.fecha} onChange={handleChange} />
         </div>
 
-        <div className="grid grid-cols-1 gap-4">
-          <SelectInput label="Tipo de Egreso" name="tipoEgresoId" value={formData.tipoEgresoId} onChange={handleChange} opciones={tiposEgreso} />
-          <SelectInput label="Condición" name="condicionId" value={formData.condicionId} onChange={handleChange} opciones={condiciones} />
-          <SelectInput label="Moneda" name="monedaId" value={formData.monedaId} onChange={handleChange} opciones={monedas} />
-          <SelectInput label="Entidad" name="entidadId" value={formData.entidadId} onChange={handleChange} opciones={entidades} />
-          <SelectInput label="Tipo de Persona" name="tipoPersona" value={formData.tipoPersona} onChange={handleChange} opciones={[{ id: 1, nombre: 'Funcionario' }, { id: 2, nombre: 'Proveedor' }]} />
-          <SelectInput label="Persona" name="personaId" value={formData.personaId} onChange={handleChange} opciones={personas} />
+        <SelectInput label="Tipo de Egreso" name="tipoEgresoId" value={formData.tipoEgresoId} onChange={handleChange} opciones={tiposEgreso} />
+        <SelectInput label="Condición" name="condicionId" value={formData.condicionId} onChange={handleChange} opciones={condiciones} />
+        <SelectInput label="Moneda" name="monedaId" value={formData.monedaId} onChange={handleChange} opciones={monedas} />
+        <SelectInput label="Entidad" name="entidadId" value={formData.entidadId} onChange={handleChange} opciones={entidades} />
+        <SelectInput label="Tipo de Persona" name="tipoPersona" value={formData.tipoPersona} onChange={handleChange} opciones={[{ id: 1, nombre: 'Funcionario' }, { id: 2, nombre: 'Proveedor' }]} />
+        <SelectInput label="Persona" name="personaId" value={formData.personaId} onChange={handleChange} opciones={personas} />
+
+        <div className="form-group">
+          <label>Observación</label>
+          <textarea name="observacion" value={formData.observacion} onChange={handleChange} rows={3} />
         </div>
 
-        <div>
-          <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">Observación</label>
-          <textarea
-            name="observacion"
-            value={formData.observacion}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600"
-            rows={3}
-          />
-        </div>
-
-        <div>
-          <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Detalles del Egreso</h2>
+        <div className="form-group">
+          <label>Detalles del Egreso</label>
           {detalles.map(detalle => (
             <DetalleEgresoItem
               key={detalle.id}
@@ -169,21 +155,10 @@ const EgresoForm = () => {
               onDelete={eliminarDetalle}
             />
           ))}
-          <button
-            type="button"
-            onClick={agregarDetalle}
-            className="text-blue-600 text-sm hover:underline dark:text-blue-400"
-          >
-            + Agregar Detalle
-          </button>
+          <button type="button" onClick={agregarDetalle} style={{ marginTop: '8px' }}>+ Agregar Detalle</button>
         </div>
 
-        <button
-          type="submit"
-          className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-md text-sm font-semibold"
-        >
-          Guardar Egreso
-        </button>
+        <button type="submit">Guardar Egreso</button>
       </form>
     </main>
   );
@@ -204,14 +179,9 @@ const SelectInput = ({
   onChange: React.ChangeEventHandler<HTMLSelectElement>;
   opciones: Opcion[];
 }) => (
-  <div>
-    <label className="block text-sm text-gray-700 dark:text-gray-300 mb-1">{label}</label>
-    <select
-      name={name}
-      value={value}
-      onChange={onChange}
-      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm dark:bg-gray-800 dark:text-white dark:border-gray-600"
-    >
+  <div className="form-group">
+    <label>{label}</label>
+    <select name={name} value={value} onChange={onChange}>
       <option value="">Seleccionar</option>
       {opciones.map(opt => (
         <option key={opt.id} value={opt.id}>
