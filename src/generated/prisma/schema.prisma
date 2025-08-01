@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Persona {
+  id          Int          @id @default(autoincrement())
+  nombre      String
+  funcionario Funcionario?
+  proveedor   Proveedor?
+  egresos     Egreso[]     @relation("PersonaEgresos")
+}
+
+model Funcionario {
+  id      Int      @id
+  persona Persona  @relation(fields: [id], references: [id])
+  egresos Egreso[] @relation("EgresosFuncionario")
+}
+
+model Proveedor {
+  id      Int      @id
+  persona Persona  @relation(fields: [id], references: [id])
+  egresos Egreso[] @relation("EgresosProveedor")
+}
+
+model Entidad {
+  id     Int    @id @default(autoincrement())
+  nombre String
+
+  egresos      Egreso[]
+  lanzamientos Lanzamiento[] // ← relación inversa con Lanzamiento
+}
+
+model Egreso {
+  id        Int  @id @default(autoincrement())
+  personaId Int?
+  entidadId Int
+
+  proveedor   Proveedor?   @relation("EgresosProveedor", fields: [personaId], references: [id], map: "fk_egreso_proveedor")
+  funcionario Funcionario? @relation("EgresosFuncionario", fields: [personaId], references: [id], map: "fk_egreso_funcionario")
+  persona     Persona?     @relation("PersonaEgresos", fields: [personaId], references: [id], map: "fk_egreso_persona")
+
+  entidad      Entidad       @relation(fields: [entidadId], references: [id])
+  lanzamientos Lanzamiento[]
+
+  // Podés agregar más campos como fecha, monto, moneda, etc.
+}
+
+model Lanzamiento {
+  id        Int @id @default(autoincrement())
+  egresoId  Int
+  entidadId Int
+
+  egreso  Egreso  @relation(fields: [egresoId], references: [id])
+  entidad Entidad @relation(fields: [entidadId], references: [id])
+}
