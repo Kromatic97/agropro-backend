@@ -3,9 +3,9 @@ import EgresoForm from './EgresoForm';
 
 export default function Page() {
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-bold mb-4">Registrar nuevo egreso</h1>
+    <main className="p-4">
+      <h1 className="text-2xl font-bold mb-4">Registrar Egreso</h1>
       <EgresoForm />
-    </div>
+    </main>
   );
 }
