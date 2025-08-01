@@ -1,10 +1,10 @@
-// src/app/egresos/page.tsx
 import EgresoForm from './EgresoForm';
+import styles from './page.module.css';
 
 export default function Page() {
   return (
-    <main className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Registrar Egreso</h1>
+    <main className={styles.main}>
+      <h1 className={styles.heading}>Registrar Egreso</h1>
       <EgresoForm />
     </main>
   );
