@@ -165,3 +165,5 @@ a.secondary {
     filter: invert();
   }
 }
+
+/* Forzar modificación para que Git lo detecte */
