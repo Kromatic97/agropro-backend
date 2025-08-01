@@ -119,3 +119,33 @@ model DetalleEgreso {
   objetoGasto    ObjetoGasto  @relation(fields: [objetoGastoId], references: [id])
   iva            Iva          @relation(fields: [ivaId], references: [id])
 }
+
+model Zafra {
+  id                 Int                  @id @default(autoincrement())
+  nombre             String
+
+  distribuciones     DistribucionZafra[] // Relación inversa
+}
+
+
+model ParticipanteLanzamiento {
+  id        Int    @id @default(autoincrement())
+  codigo    String @unique // Ej: APS, ATS, PRPT, I, ANCP
+  nombre    String
+
+  distribuciones DistribucionZafra[]
+}
+
+model DistribucionZafra {
+  id                 Int     @id @default(autoincrement())
+  zafraId            Int
+  participanteId     Int
+  superficie         Float
+  porcentaje         Float
+
+  zafra           Zafra                  @relation(fields: [zafraId], references: [id])
+  participante    ParticipanteLanzamiento @relation(fields: [participanteId], references: [id])
+
+  @@unique([zafraId, participanteId]) // Para evitar duplicados
+}
+
