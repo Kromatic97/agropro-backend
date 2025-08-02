@@ -1,7 +1,5 @@
 
 
-
-
 import EgresoForm from './egresos/EgresoForm';
 import styles from './page.module.css';
 
@@ -12,5 +10,6 @@ export default function Page() {
       <EgresoForm />
     </main>
   );
+  //decia que solucionaba//
 }
 
