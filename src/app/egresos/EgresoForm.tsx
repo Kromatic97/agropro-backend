@@ -3,20 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import DetalleEgresoItem from '@/components/egresos/DetalleEgresoItem';
 import { API_BASE_URL } from '@/lib/config';
+import { Opcion, DetalleEgreso } from '@/lib/types';
 
-// Tipos
-type Opcion = {
-  id: number;
-  nombre: string;
-};
-
-type DetalleEgreso = {
-  id: number;
-  divisionId: string;
-  objeto: string;
-  descripcion: string;
-  monto: number;
-};
+const tipoPersonaOpciones = [
+  { id: 'Funcionario', nombre: 'Funcionario' },
+  { id: 'Proveedor', nombre: 'Proveedor' }
+];
 
 const EgresoForm = () => {
   const [formData, setFormData] = useState({
@@ -40,23 +32,29 @@ const EgresoForm = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const [te, co, mo, en, dv] = await Promise.all([
-        fetch(`${API_BASE_URL}/api/tipo-egreso`).then(res => res.json()),
-        fetch(`${API_BASE_URL}/api/condiciones`).then(res => res.json()),
-        fetch(`${API_BASE_URL}/api/monedas`).then(res => res.json()),
-        fetch(`${API_BASE_URL}/api/entidades`).then(res => res.json()),
-        fetch(`${API_BASE_URL}/api/divisiones`).then(res => res.json())
-      ]);
+      try {
+        const [te, co, mo, en, dv] = await Promise.all([
+          fetch(`${API_BASE_URL}/api/tipo-egreso`).then(res => res.json()),
+          fetch(`${API_BASE_URL}/api/condicion`).then(res => res.json()),
+          fetch(`${API_BASE_URL}/api/monedas`).then(res => res.json()),
+          fetch(`${API_BASE_URL}/api/entidades`).then(res => res.json()),
+          fetch(`${API_BASE_URL}/api/divisiones`).then(res => res.json())
+        ]);
 
-      setTiposEgreso(te);
-      setCondiciones(co);
-      setMonedas(mo);
-      setEntidades(en);
-      setDivisiones(dv);
+        setTiposEgreso(te);
+        setCondiciones(co);
+        setMonedas(mo);
+        setEntidades(en);
+        setDivisiones(dv);
 
-      if (formData.tipoPersona) {
-        const ps = await fetch(`${API_BASE_URL}/api/personas?tipo=${formData.tipoPersona}`).then(res => res.json());
-        setPersonas(ps);
+        if (formData.tipoPersona === 'Funcionario' || formData.tipoPersona === 'Proveedor') {
+          const ps = await fetch(`${API_BASE_URL}/api/personas?tipo=${formData.tipoPersona}`).then(res => res.json());
+          setPersonas(Array.isArray(ps) ? ps : []);
+        } else {
+          setPersonas([]);
+        }
+      } catch (error) {
+        console.error('Error cargando datos del formulario:', error);
       }
     }
 
@@ -71,7 +69,7 @@ const EgresoForm = () => {
   function agregarDetalle() {
     const nuevo: DetalleEgreso = {
       id: Date.now(),
-      divisionId: '',
+      divisionId: 0,
       objeto: '',
       descripcion: '',
       monto: 0
@@ -95,7 +93,7 @@ const EgresoForm = () => {
     const payload = {
       ...formData,
       detalles: detalles.map(d => ({
-        divisionId: parseInt(d.divisionId),
+        divisionId: d.divisionId,
         objeto: d.objeto,
         descripcion: d.descripcion,
         monto: d.monto
@@ -103,7 +101,7 @@ const EgresoForm = () => {
     };
 
     try {
-      const res = await fetch(`${API_BASE_URL}/api/egresos`, {
+      const res = await fetch('/api/egresos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -136,7 +134,14 @@ const EgresoForm = () => {
         <SelectInput label="Condición" name="condicionId" value={formData.condicionId} onChange={handleChange} opciones={condiciones} />
         <SelectInput label="Moneda" name="monedaId" value={formData.monedaId} onChange={handleChange} opciones={monedas} />
         <SelectInput label="Entidad" name="entidadId" value={formData.entidadId} onChange={handleChange} opciones={entidades} />
-        <SelectInput label="Tipo de Persona" name="tipoPersona" value={formData.tipoPersona} onChange={handleChange} opciones={[{ id: 1, nombre: 'Funcionario' }, { id: 2, nombre: 'Proveedor' }]} />
+
+        <SelectInput
+          label="Tipo de Persona"
+          name="tipoPersona"
+          value={formData.tipoPersona}
+          onChange={handleChange}
+          opciones={tipoPersonaOpciones}
+        />
         <SelectInput label="Persona" name="personaId" value={formData.personaId} onChange={handleChange} opciones={personas} />
 
         <div className="form-group">
@@ -166,7 +171,7 @@ const EgresoForm = () => {
 
 export default EgresoForm;
 
-// Component para selects
+// SelectInput reutilizable
 const SelectInput = ({
   label,
   name,
@@ -178,7 +183,7 @@ const SelectInput = ({
   name: string;
   value: string;
   onChange: React.ChangeEventHandler<HTMLSelectElement>;
-  opciones: Opcion[];
+  opciones: { id: number | string; nombre: string }[];
 }) => (
   <div className="form-group">
     <label>{label}</label>

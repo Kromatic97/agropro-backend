@@ -1,19 +1,7 @@
 'use client';
 
 import React from 'react';
-
-type DetalleEgreso = {
-  id: number;
-  divisionId: string;
-  objeto: string;
-  descripcion: string;
-  monto: number;
-};
-
-type Opcion = {
-  id: number;
-  nombre: string;
-};
+import { Opcion, DetalleEgreso } from '@/lib/types';
 
 type Props = {
   detalle: DetalleEgreso;
