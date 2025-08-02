@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import DetalleEgresoItem from '@/components/egresos/DetalleEgresoItem';
+import { API_BASE_URL } from '@/lib/config';
 
 // Tipos
-
 type Opcion = {
   id: number;
   nombre: string;
@@ -41,11 +41,11 @@ const EgresoForm = () => {
   useEffect(() => {
     async function fetchData() {
       const [te, co, mo, en, dv] = await Promise.all([
-        fetch('/api/tipo-egreso').then(res => res.json()),
-        fetch('/api/condiciones').then(res => res.json()),
-        fetch('/api/monedas').then(res => res.json()),
-        fetch('/api/entidades').then(res => res.json()),
-        fetch('/api/divisiones').then(res => res.json())
+        fetch(`${API_BASE_URL}/api/tipo-egreso`).then(res => res.json()),
+        fetch(`${API_BASE_URL}/api/condiciones`).then(res => res.json()),
+        fetch(`${API_BASE_URL}/api/monedas`).then(res => res.json()),
+        fetch(`${API_BASE_URL}/api/entidades`).then(res => res.json()),
+        fetch(`${API_BASE_URL}/api/divisiones`).then(res => res.json())
       ]);
 
       setTiposEgreso(te);
@@ -55,7 +55,7 @@ const EgresoForm = () => {
       setDivisiones(dv);
 
       if (formData.tipoPersona) {
-        const ps = await fetch(`/api/personas?tipo=${formData.tipoPersona}`).then(res => res.json());
+        const ps = await fetch(`${API_BASE_URL}/api/personas?tipo=${formData.tipoPersona}`).then(res => res.json());
         setPersonas(ps);
       }
     }
@@ -103,7 +103,7 @@ const EgresoForm = () => {
     };
 
     try {
-      const res = await fetch('/api/egresos', {
+      const res = await fetch(`${API_BASE_URL}/api/egresos`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -166,6 +166,7 @@ const EgresoForm = () => {
 
 export default EgresoForm;
 
+// Component para selects
 const SelectInput = ({
   label,
   name,
