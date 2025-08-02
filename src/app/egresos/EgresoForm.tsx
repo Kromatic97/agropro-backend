@@ -35,7 +35,7 @@ const EgresoForm = () => {
       try {
         const [te, co, mo, en, dv] = await Promise.all([
           fetch(`${API_BASE_URL}/api/tipo-egreso`).then(res => res.json()),
-          fetch(`${API_BASE_URL}/api/condicion`).then(res => res.json()),
+          fetch(`${API_BASE_URL}/api/condiciones`).then(res => res.json()),
           fetch(`${API_BASE_URL}/api/monedas`).then(res => res.json()),
           fetch(`${API_BASE_URL}/api/entidades`).then(res => res.json()),
           fetch(`${API_BASE_URL}/api/divisiones`).then(res => res.json())
