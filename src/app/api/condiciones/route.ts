@@ -21,3 +21,8 @@ export async function POST(request: Request) {
     )
   }
 }
+
+export async function GET() {
+  const condiciones = await prisma.condicion.findMany();
+  return NextResponse.json(condiciones);
+}
